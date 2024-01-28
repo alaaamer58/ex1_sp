@@ -1,0 +1,28 @@
+CC = gcc
+CFLAGS = -Wall -Werror
+
+all: libclassloops.a libclassrec.a libclassrec.so libclassloops.so mains maindloop maindrec
+
+libclassloops.a: loops.o
+	ar rcs libclassloops.a loops.o
+
+libclassrec.a: recursives.o
+	ar rcs libclassrec.a recursives.o
+
+libclassrec.so: recursived.o
+	$(CC) -shared -o libclassrec.so recursived.o
+
+libclassloops.so: loopd.o
+	$(CC) -shared -o libclassloops.so loopd.o
+
+mains: mains.o libclassrec.a
+	$(CC) -o mains mains.o -L. -lclassrec
+
+maindloop: maindloop.o libclassloops.so
+	$(CC) -o maindloop maindloop.o -ldl
+
+maindrec: maindrec.o libclassrec.so
+	$(CC) -o maindrec maindrec.o -ldl
+
+clean:
+	rm -f *.o *.a *.so mains maindloop maindrec
